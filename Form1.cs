@@ -118,6 +118,7 @@ namespace GOLstartUp
             }
             if (showHud == true)
             {
+                // HUD 
                 Rectangle cellRect = Rectangle.Empty;
                 cellRect.X = 3;
                 cellRect.Width = 150;
@@ -394,6 +395,7 @@ namespace GOLstartUp
             }
         }
 
+        //c
         private void newToolStripButton_Click(object sender, EventArgs e)
         {
            
@@ -552,6 +554,7 @@ namespace GOLstartUp
 
         }
 
+        //Save file
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -563,6 +566,7 @@ namespace GOLstartUp
             }
         }
 
+        //Open File
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -574,6 +578,7 @@ namespace GOLstartUp
             }
         }
 
+        //HUD Checkbox
         private void hUDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             hUDToolStripMenuItem.Checked = showHud;
