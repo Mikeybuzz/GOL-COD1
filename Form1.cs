@@ -19,11 +19,14 @@ namespace GOLstartUp
 
     public partial class Form1 : Form
     {
-        // The universe array
-       
+        
+       //Show hud
         bool showHud = true;
-        const int numrow = 25;
-        const int numcol = 25;
+
+        const int numrow = 5;
+        const int numcol = 5;
+
+        // The universe array
         bool[,] universe = new bool[numrow, numcol];
         // Drawing colors
         Color gridColor = Color.Black;
@@ -119,6 +122,9 @@ namespace GOLstartUp
             if (showHud == true)
             {
                 // HUD 
+
+                //Generation counter
+
                 Rectangle cellRect = Rectangle.Empty;
                 cellRect.X = 3;
                 cellRect.Width = 150;
@@ -130,6 +136,8 @@ namespace GOLstartUp
                 cellRect.X = -25;
                 cellRect.Y = numrow * cellHeight - 100;
                 e.Graphics.DrawString("Generations: " + generations.ToString(), font, Brushes.Red, cellRect, stringFormat);
+               
+                //Cell counter
 
                 Rectangle cellRect1 = Rectangle.Empty;
                 cellRect1.Width = 150;
@@ -138,6 +146,8 @@ namespace GOLstartUp
                 cellRect1.Y = numrow * cellHeight - 80;
                 e.Graphics.DrawString("Cell Count: " + cellCount.ToString(), font, Brushes.Red, cellRect1, stringFormat);
 
+                //Boundry type
+
                 Rectangle cellRect2 = Rectangle.Empty;
                 cellRect2.Width = 150;
                 cellRect2.Height = 60;
@@ -145,6 +155,7 @@ namespace GOLstartUp
                 cellRect2.Y = numrow * cellHeight - 60;
                 e.Graphics.DrawString("Boundary Type: " + generations.ToString(), font, Brushes.Red, cellRect2, stringFormat);
 
+                //Size of Universe
                 Rectangle cellRect3 = Rectangle.Empty;
                 cellRect3.Width = 150;
                 cellRect3.Height = 60;
