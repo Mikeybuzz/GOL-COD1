@@ -20,8 +20,11 @@ namespace GOLstartUp
     public partial class Form1 : Form
     {
         // The universe array
-        bool[,] universe = new bool[20, 20];
-
+       
+        bool showHud = true;
+        const int numrow = 25;
+        const int numcol = 25;
+        bool[,] universe = new bool[numrow, numcol];
         // Drawing colors
         Color gridColor = Color.Black;
         Color cellColor = Color.Gray;
@@ -31,6 +34,8 @@ namespace GOLstartUp
 
         // Generation count
         int generations = 0;
+        // seed count
+        int seed = 0;
 
         public Form1()
         {
@@ -75,7 +80,8 @@ namespace GOLstartUp
 
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
-
+            // new int
+            int cellCount = 0;
             // Iterate through the universe in the y, top to bottom
             for (int y = 0; y < universe.GetLength(1); y++)
             {
@@ -94,6 +100,7 @@ namespace GOLstartUp
                     if (universe[x, y] == true)
                     {
                         e.Graphics.FillRectangle(cellBrush, cellRect);
+                        cellCount ++;
                     }
 
                     // Outline the cell with a pen
@@ -109,22 +116,44 @@ namespace GOLstartUp
                     }
                 }
             }
-            Font font = new Font("Arial", 16f);
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Center;
+            if (showHud == true)
+            {
+                Rectangle cellRect = Rectangle.Empty;
+                cellRect.X = 3;
+                cellRect.Width = 150;
+                cellRect.Height = 60;
+                Font font = new Font("Arial", 12f);
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Center;
+                stringFormat.LineAlignment = StringAlignment.Center;
+                cellRect.X = -25;
+                cellRect.Y = numrow * cellHeight - 100;
+                e.Graphics.DrawString("Generations: " + generations.ToString(), font, Brushes.Red, cellRect, stringFormat);
 
-            int i = graphicsPanel1.ClientSize.Width;
-            int j = graphicsPanel1.ClientSize.Height;
+                Rectangle cellRect1 = Rectangle.Empty;
+                cellRect1.Width = 150;
+                cellRect1.Height = 60;
+                cellRect1.X = -27;
+                cellRect1.Y = numrow * cellHeight - 80;
+                e.Graphics.DrawString("Cell Count: " + cellCount.ToString(), font, Brushes.Red, cellRect1, stringFormat);
+
+                Rectangle cellRect2 = Rectangle.Empty;
+                cellRect2.Width = 150;
+                cellRect2.Height = 60;
+                cellRect2.X = -12;
+                cellRect2.Y = numrow * cellHeight - 60;
+                e.Graphics.DrawString("Boundary Type: " + generations.ToString(), font, Brushes.Red, cellRect2, stringFormat);
+
+                Rectangle cellRect3 = Rectangle.Empty;
+                cellRect3.Width = 150;
+                cellRect3.Height = 60;
+                cellRect3.X = -15;
+                cellRect3.Y = numrow * cellHeight - 40;
+                e.Graphics.DrawString("Universe Size: " + generations.ToString(), font, Brushes.Red, cellRect3, stringFormat);
+            }
             
-            Rectangle rect = new Rectangle( 0, j - 100, 300, 100);
-            string msg = "Generations: " + generations;
-            // int neighbors = 8;
 
-             e.Graphics.DrawString(msg, font, Brushes.Red, rect, stringFormat);
-            msg = "Number Of Living Cells: " + livingCells;
-            Rectangle rect2 = new Rectangle(0, j - 80, 300, 100);
-            e.Graphics.DrawString(msg, font, Brushes.Red, rect2, stringFormat);
+           
 
             // Cleaning up pens and brushes
             gridPen.Dispose();
@@ -368,13 +397,28 @@ namespace GOLstartUp
         private void newToolStripButton_Click(object sender, EventArgs e)
         {
            
-            clearUniverse();
+           timer.Stop();
+            for (int i = 0; i < numrow; i++)
+            {
+                for (int j = 0; j < numcol; j++)
+                {
+                    universe[i, j] = false;
+                }
+            }
+            generations = 0;
+            graphicsPanel1.Invalidate();
         }
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
-            string fileName = "SaveFile.txt";
-            saveData(fileName);
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            DialogResult result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string file = saveFileDialog1.FileName;
+                saveData(file);
+            }
+   
         }
 
 
@@ -404,8 +448,13 @@ namespace GOLstartUp
 
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
-            string fileName = "SaveFile.txt";
-            loadData(fileName);
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string file = openFileDialog1.FileName;
+                loadData(file);
+            }
         }
         
         private void loadData(string fileName)
@@ -495,6 +544,65 @@ namespace GOLstartUp
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            graphicsPanel1.Invalidate();
+
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            DialogResult result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string file = saveFileDialog1.FileName;
+                saveData(file);
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string file = openFileDialog1.FileName;
+                loadData(file);
+            }
+        }
+
+        private void hUDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hUDToolStripMenuItem.Checked = showHud;
+        }
+
+        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+        private void generateFromSeed(int seed)
+        {
+            this.seed = seed;
+            Random rnd = new Random(seed);
+            for (int i = 0; i < numrow; i++)
+            {
+                for (int j = 0; j < numcol; j++)
+                {
+                    if (rnd.NextDouble() < 0.3)
+                    {
+                        universe[i, j] = true;
+                        
+                    }
+                    else
+                    {
+                        universe[i, j] = false;
+                    }
+                }
+            }
+            graphicsPanel1.Invalidate();
         }
     }
 }
