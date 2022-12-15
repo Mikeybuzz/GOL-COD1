@@ -13,13 +13,15 @@ using System.Globalization;
 using System.Drawing.Printing;
 using GOLStartUp;
 using System.Drawing.Drawing2D;
+using System.Diagnostics;
 
 namespace GOLstartUp
 {
     public partial class Form1 : Form
     {
+        Settings userSettings;
         //Show hud
-        bool showHud = true;
+        //bool showHud = true;
 
         // The universe array
         bool[,] universe;
@@ -39,12 +41,11 @@ namespace GOLstartUp
         {
             InitializeComponent();
 
-            int startingRows = 10;
-            int startingCols = 10;
-            universe = new bool[startingRows, startingCols];
+            userSettings = new Settings("settings.txt");
+            universe = new bool[userSettings.NumRows, userSettings.NumColumns];
 
             // Setup the timer
-            timer.Interval = 100; // milliseconds
+            timer.Interval = userSettings.TimerIntervalMS; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
@@ -116,7 +117,7 @@ namespace GOLstartUp
                     }
                 }
             }
-            if (showHud == true)
+            if (hUDToolStripMenuItem.Checked == true)
             {
                 // HUD 
 
@@ -135,7 +136,7 @@ namespace GOLstartUp
                 cellRect.X = -25;
                 cellRect.Y = colLength * cellHeight - 100;
                 e.Graphics.DrawString("Generations: " + generations.ToString(), font, Brushes.Red, cellRect, stringFormat);
-               
+
                 //Cell counter
 
                 Rectangle cellRect1 = Rectangle.Empty;
@@ -162,9 +163,6 @@ namespace GOLstartUp
                 cellRect3.Y = colLength * cellHeight - 40;
                 e.Graphics.DrawString("Universe Size: " + generations.ToString(), font, Brushes.Red, cellRect3, stringFormat);
             }
-            
-
-           
 
             // Cleaning up pens and brushes
             gridPen.Dispose();
@@ -229,46 +227,41 @@ namespace GOLstartUp
 
 
         private int CountNeighborsFinite(int x, int y)
+        {
+            int count = 0;
+            int xLen = universe.GetLength(0);
+            int yLen = universe.GetLength(1);
+            for (int yOffset = -1; yOffset <= 1; yOffset++)
             {
-                int count = 0;
-                int xLen = universe.GetLength(0);
-                int yLen = universe.GetLength(1);
-                for (int yOffset = -1; yOffset <= 1; yOffset++)
+                for (int xOffset = -1; xOffset <= 1; xOffset++)
                 {
-                    for (int xOffset = -1; xOffset <= 1; xOffset++)
-                    {
-                        int xCheck = x + xOffset;
-                        int yCheck = y + yOffset;
-                        // if xOffset and yOffset are both equal to 0 then continue
-                        if (xCheck == 0 && yOffset == 0)
-                        {
-                            continue;
-                        }
-                        // if xCheck is less than 0 then continue
-                        if (xCheck < 0)
-                        {
-                            continue;
-                        }
-                        // if yCheck is less than 0 then continue
-                        if (yCheck < 0)
-                        {
-                            continue;
-                        }
-                        // if xCheck is greater than or equal too xLen then continue
-                        if (xCheck >= xLen)
-                        {
-                            continue;
-                        }
-                        // if yCheck is greater than or equal too yLen then continue
-                        if (yCheck >= yLen)
-                        {
-                            continue;
-                        }
+                    int xCheck = x + xOffset;
+                    int yCheck = y + yOffset;
 
-                        if (universe[xCheck, yCheck] == true)
-                            count++;
-                    }
+                    // if xOffset and yOffset are both equal to 0 then continue
+                    if (xCheck == 0 && yOffset == 0)
+                        continue;
+
+                    // if xCheck is less than 0 then continue
+                    if (xCheck < 0)
+                        continue;
+
+                    // if yCheck is less than 0 then continue
+                    if (yCheck < 0)
+                        continue;
+
+                    // if xCheck is greater than or equal too xLen then continue
+                    if (xCheck >= xLen)
+                        continue;
+
+                    // if yCheck is greater than or equal too yLen then continue
+                    if (yCheck >= yLen)
+                        continue;
+
+                    if (universe[xCheck, yCheck] == true)
+                        count++;
                 }
+            }
             
             return count;
         }
@@ -496,8 +489,13 @@ namespace GOLstartUp
                 string value = dlg.Controls["ComboTimerInterval"].Text;
                 if (value != "")
                 {
-                    timer.Interval = Convert.ToInt32(value);
+                    var newInterval = Convert.ToInt32(value);
+                    if (newInterval != timer.Interval)
+                    {
+                        timer.Interval = newInterval;
+                    }
                 }
+
                 int newWidth = 0;
                 int newHeight = 0;
 
@@ -525,13 +523,12 @@ namespace GOLstartUp
                     graphicsPanel1.Invalidate();
                     Refresh();
                 }
-
             }
         }
         // Grid toggle
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Sorry, this feature isn't added yet!");
+            //MessageBox.Show("Sorry, this feature isn't added yet!");
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -561,12 +558,6 @@ namespace GOLstartUp
                 string file = openFileDialog1.FileName;
                 loadData(file);
             }
-        }
-
-        //HUD Checkbox
-        private void hUDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            hUDToolStripMenuItem.Checked = showHud;
         }
 
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
@@ -600,7 +591,37 @@ namespace GOLstartUp
         //Reset
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ClearUniverse();
+            userSettings.ResetToDefaults();
+
+            ApplySettings();
+        }
+
+        //Reload to Default
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ApplySettings();
+        }
+
+        private void ApplySettings()
+        {
+            bool areRowsDifferent = universe.GetLength(0) != userSettings.NumRows;
+            bool areColsDifferent = universe.GetLength(1) != userSettings.NumColumns;
+            if (areRowsDifferent || areColsDifferent)
+            {
+                universe = new bool[userSettings.NumRows, userSettings.NumColumns];
+                ClearUniverse();
+            }
+
+            timer.Interval = userSettings.TimerIntervalMS;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            userSettings.TimerIntervalMS = timer.Interval;
+            userSettings.NumRows = universe.GetLength(0);
+            userSettings.NumColumns = universe.GetLength(1);
+
+            userSettings.Save();
         }
     }
 }
