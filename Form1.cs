@@ -23,8 +23,8 @@ namespace GOLstartUp
        //Show hud
         bool showHud = true;
 
-        const int numrow = 5;
-        const int numcol = 5;
+        const int numrow = 10;
+        const int numcol = 10;
 
         // The universe array
         bool[,] universe = new bool[numrow, numcol];
@@ -125,6 +125,8 @@ namespace GOLstartUp
 
                 //Generation counter
 
+                int rowLength = universe.GetLength(0);
+
                 Rectangle cellRect = Rectangle.Empty;
                 cellRect.X = 3;
                 cellRect.Width = 150;
@@ -134,7 +136,7 @@ namespace GOLstartUp
                 stringFormat.Alignment = StringAlignment.Center;
                 stringFormat.LineAlignment = StringAlignment.Center;
                 cellRect.X = -25;
-                cellRect.Y = numrow * cellHeight - 100;
+                cellRect.Y = rowLength * cellHeight - 100;
                 e.Graphics.DrawString("Generations: " + generations.ToString(), font, Brushes.Red, cellRect, stringFormat);
                
                 //Cell counter
@@ -143,7 +145,7 @@ namespace GOLstartUp
                 cellRect1.Width = 150;
                 cellRect1.Height = 60;
                 cellRect1.X = -27;
-                cellRect1.Y = numrow * cellHeight - 80;
+                cellRect1.Y = rowLength * cellHeight - 80;
                 e.Graphics.DrawString("Cell Count: " + cellCount.ToString(), font, Brushes.Red, cellRect1, stringFormat);
 
                 //Boundry type
@@ -152,7 +154,7 @@ namespace GOLstartUp
                 cellRect2.Width = 150;
                 cellRect2.Height = 60;
                 cellRect2.X = -12;
-                cellRect2.Y = numrow * cellHeight - 60;
+                cellRect2.Y = rowLength * cellHeight - 60;
                 e.Graphics.DrawString("Boundary Type: " + generations.ToString(), font, Brushes.Red, cellRect2, stringFormat);
 
                 //Size of Universe
@@ -160,7 +162,7 @@ namespace GOLstartUp
                 cellRect3.Width = 150;
                 cellRect3.Height = 60;
                 cellRect3.X = -15;
-                cellRect3.Y = numrow * cellHeight - 40;
+                cellRect3.Y = rowLength * cellHeight - 40;
                 e.Graphics.DrawString("Universe Size: " + generations.ToString(), font, Brushes.Red, cellRect3, stringFormat);
             }
             
@@ -535,12 +537,12 @@ namespace GOLstartUp
                     timer.Interval = Convert.ToInt32(value);
                 }
                 int newwidth = 0;
-                int newheight = 0;
+                int newHeight = 0;
 
                 string value2 = dlg.Controls["ComboUniverseHeight"].Text;
                 if (value2 != "")
                 {
-                    newheight = Convert.ToInt32(value2);
+                    newHeight = Convert.ToInt32(value2);
                    // graphicsPanel1.Height = Convert.ToInt32(value2);
                 }
                 string value3 = dlg.Controls["ComboUniverseWidth"].Text;
@@ -549,9 +551,9 @@ namespace GOLstartUp
                     newwidth = Convert.ToInt32(value3);
                     //graphicsPanel1.Width = Convert.ToInt32(value3);
                 }
-                if (newwidth != 0 && newheight != 0)
+                if (newwidth != 0 && newHeight != 0)
                 {
-                    bool[,] universe = new bool[newwidth, newheight];
+                    universe = new bool[newwidth, newHeight];
                     graphicsPanel1.Invalidate();
                     Refresh();
                 }
@@ -604,6 +606,8 @@ namespace GOLstartUp
         {
             
         }
+
+        //Generate Seed
         private void generateFromSeed(int seed)
         {
             this.seed = seed;
