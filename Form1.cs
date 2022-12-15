@@ -371,6 +371,7 @@ namespace GOLstartUp
             this.Invalidate();
         }
 
+        //clear universe
         private void clearUniverse()
         {
             for (int y = 0; y < universe.GetLength(1); y++)
@@ -384,6 +385,7 @@ namespace GOLstartUp
              }
         }
 
+        //Random seed
         private void randomize(int seedValue)
         {
             Random rnd = new Random(seedValue);
@@ -406,7 +408,7 @@ namespace GOLstartUp
             }
         }
 
-        //c
+        //New Universe
         private void newToolStripButton_Click(object sender, EventArgs e)
         {
            
@@ -422,6 +424,7 @@ namespace GOLstartUp
             graphicsPanel1.Invalidate();
         }
 
+        //Save File
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -434,7 +437,7 @@ namespace GOLstartUp
    
         }
 
-
+        //Save Data
         private void saveData(string fileName)
         {
             int xlength = universe.GetLength(0);
@@ -459,6 +462,7 @@ namespace GOLstartUp
             File.WriteAllLines(fileName, lines);
         }
 
+        //Open File
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -470,6 +474,7 @@ namespace GOLstartUp
             }
         }
         
+        //Load File
         private void loadData(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
@@ -553,7 +558,7 @@ namespace GOLstartUp
 
             }
         }
-
+        // Grid toggle
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
@@ -620,5 +625,7 @@ namespace GOLstartUp
             }
             graphicsPanel1.Invalidate();
         }
+
+        
     }
 }

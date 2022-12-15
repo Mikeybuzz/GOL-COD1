@@ -226,6 +226,7 @@
             this.toroidalToolStripMenuItem.Name = "toroidalToolStripMenuItem";
             this.toroidalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.toroidalToolStripMenuItem.Text = "Toroidal";
+            this.toroidalToolStripMenuItem.Click += new System.EventHandler(this.toroidalToolStripMenuItem_Click);
             // 
             // finiteToolStripMenuItem
             // 
@@ -274,20 +275,20 @@
             // fromSeedToolStripMenuItem
             // 
             this.fromSeedToolStripMenuItem.Name = "fromSeedToolStripMenuItem";
-            this.fromSeedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fromSeedToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.fromSeedToolStripMenuItem.Text = "From Seed";
             this.fromSeedToolStripMenuItem.Click += new System.EventHandler(this.fromSeedToolStripMenuItem_Click);
             // 
             // currentSeedToolStripMenuItem
             // 
             this.currentSeedToolStripMenuItem.Name = "currentSeedToolStripMenuItem";
-            this.currentSeedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.currentSeedToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.currentSeedToolStripMenuItem.Text = "Current Seed";
             // 
             // fromTimeToolStripMenuItem
             // 
             this.fromTimeToolStripMenuItem.Name = "fromTimeToolStripMenuItem";
-            this.fromTimeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fromTimeToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.fromTimeToolStripMenuItem.Text = "From Time";
             // 
             // settingsToolStripMenuItem
