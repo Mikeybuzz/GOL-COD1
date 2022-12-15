@@ -19,12 +19,15 @@ namespace GOLstartUp
 {
     public partial class Form1 : Form
     {
-        Settings userSettings;
-        //Show hud
-        //bool showHud = true;
+        public Settings userSettings;
+        
+        public bool[,] universe;
 
-        // The universe array
-        bool[,] universe;
+        bool showNeighborCount = true;
+        bool showHud = true;
+        bool showGrid = true;
+
+        
         // Drawing colors
         Color gridColor = Color.Black;
         Color cellColor = Color.Gray;
@@ -104,20 +107,28 @@ namespace GOLstartUp
                         cellCount ++;
                     }
 
+                    
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
-                    Font font1 = new Font("Arial", 14f);
-                    int count = CountNeighborsFinite(x, y);
-                    if (count > 0)
+
+                    if (showGrid)
+                        e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+
+                    if (showNeighborCount)
                     {
-                        StringFormat stringFormat1 = new StringFormat();
-                        stringFormat1.Alignment = StringAlignment.Center;
-                        stringFormat1.LineAlignment = StringAlignment.Center;
-                        e.Graphics.DrawString(count.ToString(), font1, Brushes.Red, cellRect, stringFormat1);
+                        Font font1 = new Font("Arial", 14f);
+                        int count = CountNeighborsFinite(x, y);
+                        if (count > 0)
+                        {
+                            StringFormat stringFormat1 = new StringFormat();
+                            stringFormat1.Alignment = StringAlignment.Center;
+                            stringFormat1.LineAlignment = StringAlignment.Center;
+                            e.Graphics.DrawString(count.ToString(), font1, Brushes.Red, cellRect, stringFormat1);
+                        }
                     }
                 }
             }
-            if (hUDToolStripMenuItem.Checked == true)
+
+            if (showHud == true)
             {
                 // HUD 
 
@@ -407,10 +418,10 @@ namespace GOLstartUp
             int xlength = universe.GetLength(0);
             int ylength = universe.GetLength(1);
             string[] lines = new string[ylength];
-            for (int i = 0; i < ylength; i++)
+            for (int i = 0; i < xlength; i++)
             {
                 string line = "";
-                for (int j = 0; j < xlength; j++)
+                for (int j = 0; j < ylength; j++)
                 {
                     if (universe[i, j] == true)
                     {
@@ -445,7 +456,7 @@ namespace GOLstartUp
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
-                for (int j = 0; j < lines.Length; j++)
+                for (int j = 0; j < line.Length; j++)
                 {
                     if (line[j] == 'O')
                     {
@@ -503,13 +514,11 @@ namespace GOLstartUp
                 if (value2 != "")
                 {
                     newHeight = Convert.ToInt32(value2);
-                   // graphicsPanel1.Height = Convert.ToInt32(value2);
                 }
                 string value3 = dlg.Controls["ComboUniverseWidth"].Text;
                 if (value3 != "")
                 {
                     newWidth = Convert.ToInt32(value3);
-                    //graphicsPanel1.Width = Convert.ToInt32(value3);
                 }
 
                 bool areInputsValid = newWidth != 0 && newHeight != 0;
@@ -524,11 +533,6 @@ namespace GOLstartUp
                     Refresh();
                 }
             }
-        }
-        // Grid toggle
-        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //MessageBox.Show("Sorry, this feature isn't added yet!");
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -560,9 +564,11 @@ namespace GOLstartUp
             }
         }
 
+        //From Seed
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Sorry, this feature isn't added yet!");
+            int randomNum
         }
 
         //Generate Seed
@@ -614,7 +620,7 @@ namespace GOLstartUp
 
             timer.Interval = userSettings.TimerIntervalMS;
         }
-
+        
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             userSettings.TimerIntervalMS = timer.Interval;
@@ -622,6 +628,59 @@ namespace GOLstartUp
             userSettings.NumColumns = universe.GetLength(1);
 
             userSettings.Save();
+        }
+        // Neighbor Toggle
+        private void neighborCountToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showNeighborCount = !showNeighborCount;
+            graphicsPanel1.Invalidate();
+        }
+        //HUD toggle
+        private void hUDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showHud = !showHud;
+            graphicsPanel1.Invalidate();
+        }
+
+        // Grid toggle
+        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showGrid = !showGrid;
+            graphicsPanel1.Invalidate();
+        }
+        //Exit
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        //Torodial
+        private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Sorry, this feature isn't added yet!");
+        }
+        //Finite
+        private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Sorry, this feature isn't added yet!");
+        }
+
+        //start
+        private void startToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Start();
+        }
+
+        //Pause
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Stop();
+        }
+
+        //Next
+        private void nextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NextGeneration();
+            this.Invalidate();
         }
     }
 }

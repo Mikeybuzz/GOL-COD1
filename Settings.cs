@@ -7,7 +7,7 @@ using System.IO;
 
 namespace GOLStartUp
 {
-    internal class Settings
+    public class Settings
     {
         public int TimerIntervalMS { get; set; } = defaultTimerInterval;
         public int NumRows { get; set; } = defaultRows;
