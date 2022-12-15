@@ -16,18 +16,13 @@ using System.Drawing.Drawing2D;
 
 namespace GOLstartUp
 {
-
     public partial class Form1 : Form
     {
-        
-       //Show hud
+        //Show hud
         bool showHud = true;
 
-        const int numrow = 10;
-        const int numcol = 10;
-
         // The universe array
-        bool[,] universe = new bool[numrow, numcol];
+        bool[,] universe;
         // Drawing colors
         Color gridColor = Color.Black;
         Color cellColor = Color.Gray;
@@ -44,6 +39,10 @@ namespace GOLstartUp
         {
             InitializeComponent();
 
+            int startingRows = 10;
+            int startingCols = 10;
+            universe = new bool[startingRows, startingCols];
+
             // Setup the timer
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
@@ -53,8 +52,6 @@ namespace GOLstartUp
         // Calculate the next generation of cells
         private void NextGeneration()
         {
-
-
             // Increment generation count
             generations++;
             applyRules();
@@ -125,7 +122,7 @@ namespace GOLstartUp
 
                 //Generation counter
 
-                int rowLength = universe.GetLength(0);
+                int colLength = universe.GetLength(1);
 
                 Rectangle cellRect = Rectangle.Empty;
                 cellRect.X = 3;
@@ -136,7 +133,7 @@ namespace GOLstartUp
                 stringFormat.Alignment = StringAlignment.Center;
                 stringFormat.LineAlignment = StringAlignment.Center;
                 cellRect.X = -25;
-                cellRect.Y = rowLength * cellHeight - 100;
+                cellRect.Y = colLength * cellHeight - 100;
                 e.Graphics.DrawString("Generations: " + generations.ToString(), font, Brushes.Red, cellRect, stringFormat);
                
                 //Cell counter
@@ -145,7 +142,7 @@ namespace GOLstartUp
                 cellRect1.Width = 150;
                 cellRect1.Height = 60;
                 cellRect1.X = -27;
-                cellRect1.Y = rowLength * cellHeight - 80;
+                cellRect1.Y = colLength * cellHeight - 80;
                 e.Graphics.DrawString("Cell Count: " + cellCount.ToString(), font, Brushes.Red, cellRect1, stringFormat);
 
                 //Boundry type
@@ -154,7 +151,7 @@ namespace GOLstartUp
                 cellRect2.Width = 150;
                 cellRect2.Height = 60;
                 cellRect2.X = -12;
-                cellRect2.Y = rowLength * cellHeight - 60;
+                cellRect2.Y = colLength * cellHeight - 60;
                 e.Graphics.DrawString("Boundary Type: " + generations.ToString(), font, Brushes.Red, cellRect2, stringFormat);
 
                 //Size of Universe
@@ -162,7 +159,7 @@ namespace GOLstartUp
                 cellRect3.Width = 150;
                 cellRect3.Height = 60;
                 cellRect3.X = -15;
-                cellRect3.Y = rowLength * cellHeight - 40;
+                cellRect3.Y = colLength * cellHeight - 40;
                 e.Graphics.DrawString("Universe Size: " + generations.ToString(), font, Brushes.Red, cellRect3, stringFormat);
             }
             
@@ -195,25 +192,6 @@ namespace GOLstartUp
                 // Tell Windows you need to repaint
                 graphicsPanel1.Invalidate();
             }
-
-            //Font font = new Font("Arial", 20f);
-
-            //StringFormat stringFormat = new StringFormat();
-            // stringFormat.Alignment = StringAlignment.Center;
-            // stringFormat.LineAlignment = StringAlignment.Center;
-
-            // Rectangle rect = new Rectangle(0, 0, 100, 100);
-            // int neighbors = 8;
-
-            // e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Black, rect, stringFormat);
-
-            //bool[,] universe = new bool[5, 5];
-            //bool[,] scratchPad = new bool[5, 5];
-
-            // Swap them...
-           // bool[,] temp = universe;
-           // universe = scratchPad;
-           // scratchPad = temp;
         }
 
 
@@ -374,8 +352,10 @@ namespace GOLstartUp
         }
 
         //clear universe
-        private void clearUniverse()
+        private void ClearUniverse()
         {
+            timer.Stop();
+
             for (int y = 0; y < universe.GetLength(1); y++)
             {
                 // Iterate through the universe in the x, left to right
@@ -383,8 +363,10 @@ namespace GOLstartUp
                 {
                     universe[x,y] = false;
                 }
+            }
 
-             }
+            generations = 0;
+            graphicsPanel1.Invalidate();
         }
 
         //Random seed
@@ -404,26 +386,14 @@ namespace GOLstartUp
                     {
                         universe[x, y] = true;
                     }
-                   
                 }
-
             }
         }
 
         //New Universe
         private void newToolStripButton_Click(object sender, EventArgs e)
         {
-           
-           timer.Stop();
-            for (int i = 0; i < numrow; i++)
-            {
-                for (int j = 0; j < numcol; j++)
-                {
-                    universe[i, j] = false;
-                }
-            }
-            generations = 0;
-            graphicsPanel1.Invalidate();
+            ClearUniverse();
         }
 
         //Save File
@@ -436,7 +406,6 @@ namespace GOLstartUp
                 string file = saveFileDialog1.FileName;
                 saveData(file);
             }
-   
         }
 
         //Save Data
@@ -509,24 +478,17 @@ namespace GOLstartUp
              Rectangle rect = new Rectangle(0, 0, 100, 100);
 
             string msg = "Living Cells: ";
-           
-           // e.Graphics.DrawString(msg, font, Brushes.Black, rect, stringFormat);
-
-            //bool[,] universe = new bool[5, 5];
-            //bool[,] scratchPad = new bool[5, 5];
-
-            // Swap them...
-            // bool[,] temp = universe;
-            // universe = scratchPad;
-            // scratchPad = temp;
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ModalDialog dlg = new ModalDialog();
-          
+
             // Set the properties
-            
+            dlg.Controls["ComboUniverseWidth"].Text = universe.GetLength(0).ToString();
+            dlg.Controls["ComboUniverseHeight"].Text = universe.GetLength(1).ToString();
+
+
             if (DialogResult.OK == dlg.ShowDialog())
             {
                 // Get the properties
@@ -536,7 +498,7 @@ namespace GOLstartUp
                 {
                     timer.Interval = Convert.ToInt32(value);
                 }
-                int newwidth = 0;
+                int newWidth = 0;
                 int newHeight = 0;
 
                 string value2 = dlg.Controls["ComboUniverseHeight"].Text;
@@ -548,12 +510,18 @@ namespace GOLstartUp
                 string value3 = dlg.Controls["ComboUniverseWidth"].Text;
                 if (value3 != "")
                 {
-                    newwidth = Convert.ToInt32(value3);
+                    newWidth = Convert.ToInt32(value3);
                     //graphicsPanel1.Width = Convert.ToInt32(value3);
                 }
-                if (newwidth != 0 && newHeight != 0)
+
+                bool areInputsValid = newWidth != 0 && newHeight != 0;
+                bool isWidthChanged = newWidth != universe.GetLength(0);
+                bool isHeightChanged = newHeight != universe.GetLength(1);
+                bool haveInputsChanged = isWidthChanged || isHeightChanged;
+
+                if (areInputsValid && haveInputsChanged)
                 {
-                    universe = new bool[newwidth, newHeight];
+                    universe = new bool[newWidth, newHeight];
                     graphicsPanel1.Invalidate();
                     Refresh();
                 }
@@ -563,13 +531,12 @@ namespace GOLstartUp
         // Grid toggle
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            MessageBox.Show("Sorry, this feature isn't added yet!");
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            graphicsPanel1.Invalidate();
-
+            ClearUniverse();
         }
 
         //Save file
@@ -604,7 +571,7 @@ namespace GOLstartUp
 
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            MessageBox.Show("Sorry, this feature isn't added yet!");
         }
 
         //Generate Seed
@@ -612,9 +579,9 @@ namespace GOLstartUp
         {
             this.seed = seed;
             Random rnd = new Random(seed);
-            for (int i = 0; i < numrow; i++)
+            for (int i = 0; i < universe.GetLength(0); i++)
             {
-                for (int j = 0; j < numcol; j++)
+                for (int j = 0; j < universe.GetLength(1); j++)
                 {
                     if (rnd.NextDouble() < 0.3)
                     {
@@ -630,6 +597,10 @@ namespace GOLstartUp
             graphicsPanel1.Invalidate();
         }
 
-        
+        //Reset
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ClearUniverse();
+        }
     }
 }
