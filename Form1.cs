@@ -568,7 +568,7 @@ namespace GOLstartUp
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Sorry, this feature isn't added yet!");
-            int randomNum
+            
         }
 
         //Generate Seed
